@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.1 < aspnetcore-3.0'
 ms.author: riande
 ms.custom: mvc
 ms.date: 12/03/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/samesite/mvc21
 ---
 
@@ -14,11 +14,13 @@ uid: security/samesite/mvc21
 
 ASP.NET Core 2.1 has built-in support for the [SameSite](https://www.owasp.org/index.php/SameSite) attribute, but it was written to the original standard. The [patched behavior](https://github.com/dotnet/aspnetcore/issues/8212) changed the meaning of `SameSite.None` to emit the sameSite attribute with a value of `None`, rather than not emit the value at all. If you want to not emit the value you can set the `SameSite` property on a cookie to -1.
 
+[!INCLUDE[](~/includes/SameSiteIdentity.md)]
+
 ## <a name="sampleCode"></a>Writing the SameSite attribute
 
 Following is an example of how to write a SameSite attribute on a cookie:
 
-```c#
+```csharp
 var cookieOptions = new CookieOptions
 {
     // Set the secure flag, which Chrome's changes will require for SameSite none.
@@ -40,9 +42,9 @@ Response.Cookies.Append(CookieName, "cookieValue", cookieOptions);
 
 ## Setting Cookie Authentication and Session State cookies
 
-Cookie authentication, session state and [various other components](https://docs.microsoft.com/aspnet/core/security/samesite?view=aspnetcore-2.1) set their sameSite options via Cookie options, for example
+Cookie authentication, session state and [various other components](../samesite.md?view=aspnetcore-2.1) set their sameSite options via Cookie options, for example
 
-```c#
+```csharp
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -75,7 +77,7 @@ In order to intercept cookies, to adjust the none value according to its support
 
 To insert it into the pipeline use `app.UseCookiePolicy()` in the `Configure(IApplicationBuilder, IHostingEnvironment)` method in [Startup.cs](https://github.com/blowdart/AspNetSameSiteSamples/blob/master/AspNetCore21MVC/Startup.cs). For example:
 
-```c#
+```csharp
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
     if (env.IsDevelopment())
@@ -105,7 +107,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 Then in the `ConfigureServices(IServiceCollection services)` configure the cookie policy to call out to a helper class when cookies are appended or deleted. For example:
 
-```c#
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     services.Configure<CookiePolicyOptions>(options =>
@@ -142,9 +144,9 @@ none attribute value. The check is done using the [SameSiteSupport](https://gith
 
 ## Targeting .NET Framework
 
-ASP.NET Core and System.Web (ASP.NET Classic) have independent implementations of SameSite. The SameSite KB patches for .NET Framework are not required if using ASP.NET Core nor does the System.Web SameSite minimum framework version requirement (.NET 4.7.2) apply to ASP.NET Core.
+ASP.NET Core and System.Web (ASP.NET 4.x) have independent implementations of SameSite. The SameSite KB patches for .NET Framework are not required if using ASP.NET Core nor does the System.Web SameSite minimum framework version requirement (.NET Framework 4.7.2) apply to ASP.NET Core.
 
-ASP.NET Core on .NET requires updating nuget package dependencies to get the appropriate fixes.
+ASP.NET Core on .NET requires updating NuGet package dependencies to get the appropriate fixes.
 
 To get the ASP.NET Core changes for .NET Framework ensure that you have a direct reference to the patched packages and 
 versions (2.1.14 or later 2.1 versions).
@@ -157,5 +159,5 @@ versions (2.1.14 or later 2.1 versions).
 ### More Information
  
 [Chrome Updates](https://www.chromium.org/updates/same-site)
-[ASP.NET Core SameSite Documentation](https://docs.microsoft.com/aspnet/core/security/samesite?view=aspnetcore-2.1)
+[ASP.NET Core SameSite Documentation](../samesite.md?view=aspnetcore-2.1)
 [ASP.NET Core 2.1 SameSite Change Announcement](https://github.com/dotnet/aspnetcore/issues/8212)

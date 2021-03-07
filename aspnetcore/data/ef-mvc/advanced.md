@@ -6,7 +6,7 @@ ms.author: riande
 ms.custom: mvc
 ms.date: 03/27/2019
 ms.topic: tutorial
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: data/ef-mvc/advanced
 ---
 
@@ -93,7 +93,7 @@ In the **Add New Item** dialog, click **ASP.NET Core** under **Installed** in th
 
 In *Views/Courses/UpdateCourseCredits.cshtml*, replace the template code with the following code:
 
-[!code-html[](intro/samples/cu/Views/Courses/UpdateCourseCredits.cshtml)]
+[!code-cshtml[](intro/samples/cu/Views/Courses/UpdateCourseCredits.cshtml)]
 
 Run the `UpdateCourseCredits` method by selecting the **Courses** tab, then adding "/UpdateCourseCredits" to the end of the URL in the browser's address bar (for example: `http://localhost:5813/Courses/UpdateCourseCredits`). Enter a number in the text box:
 

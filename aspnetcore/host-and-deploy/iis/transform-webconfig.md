@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.2'
 ms.author: riande
 ms.custom: mvc
 ms.date: 01/13/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: host-and-deploy/iis/transform-webconfig
 ---
 # Transform web.config
@@ -101,7 +101,7 @@ Environment transformations are run third, after [Build configuration](#build-co
 
 Include a *web.{ENVIRONMENT}.config* file for each [environment](xref:fundamentals/environments) requiring a *web.config* transformation.
 
-In the following example, a environment-specific environment variable is set in *web.Production.config* for the Production environment:
+In the following example, an environment-specific environment variable is set in *web.Production.config* for the Production environment:
 
 ```xml
 <?xml version="1.0"?>

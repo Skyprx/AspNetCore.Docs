@@ -4,7 +4,7 @@ author: rick-anderson
 description: Learn how Areas are an ASP.NET MVC feature used to organize related functionality into a group as a separate namespace (for routing) and folder structure (for views).
 ms.author: riande
 ms.date: 03/21/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: mvc/controllers/areas
 ---
 # Areas in ASP.NET Core
@@ -194,7 +194,7 @@ Consider the *Services* area of the sample code, which doesn't contain a *_ViewI
 
 In the preceding markup:
 
-* The fully qualified domain name must be used to specify the model (`@model RPareas.Areas.Services.Pages.Manage.AboutModel`).
+* The fully qualified class name must be used to specify the model (`@model RPareas.Areas.Services.Pages.Manage.AboutModel`).
 * [Tag Helpers](xref:mvc/views/tag-helpers/intro) are enabled by `@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers`
 
 In the sample download, the Products area contains the following *_ViewImports.cshtml* file:

@@ -5,8 +5,8 @@ description: Add MessagePack Hub Protocol to ASP.NET Core SignalR.
 monikerRange: '>= aspnetcore-2.1'
 ms.author: bradyg
 ms.custom: mvc
-ms.date: 04/13/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 09/24/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: signalr/messagepackhubprotocol
 ---
 
@@ -57,8 +57,11 @@ services.AddSignalR()
 To enable MessagePack in the .NET Client, install the `Microsoft.AspNetCore.SignalR.Protocols.MessagePack` package and call `AddMessagePackProtocol` on `HubConnectionBuilder`.
 
 ```csharp
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+
 var hubConnection = new HubConnectionBuilder()
-                        .WithUrl("/chatHub")
+                        .WithUrl("/chathub")
                         .AddMessagePackProtocol()
                         .Build();
 ```
@@ -93,13 +96,33 @@ Adding `.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
 
 ```javascript
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chatHub")
+    .withUrl("/chathub")
     .withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
     .build();
 ```
 
 > [!NOTE]
 > At this time, there are no configuration options for the MessagePack protocol on the JavaScript client.
+
+### Java client
+
+To enable MessagePack with Java, install the `com.microsoft.signalr.messagepack` package. When using Gradle, add the following line to the `dependencies` section of the *build.gradle* file:
+
+```gradle
+implementation 'com.microsoft.signalr.messagepack:signalr-messagepack:5.0.0'
+```
+
+When using Maven, add the following lines inside the `<dependencies>` element of the *pom.xml* file:
+
+[!code-xml[pom.xml dependency element messagePack](java-client/sample/pom.xml?name=snippet_dependencyElement_messagePack)]
+
+Call `withHubProtocol(new MessagePackHubProtocol())` on `HubConnectionBuilder`.
+
+```java
+HubConnection messagePackConnection = HubConnectionBuilder.create("YOUR HUB URL HERE")
+    .withHubProtocol(new MessagePackHubProtocol())
+    .build();
+```
 
 ## MessagePack quirks
 
@@ -169,6 +192,10 @@ InvalidDataException: Error binding arguments. Make sure that the types of the p
 
 For more information on this limitation, see GitHub issue [aspnet/SignalR#2937](https://github.com/aspnet/SignalR/issues/2937).
 
+### Chars and Strings in Java
+
+In the java client, `char` objects will be serialized as one-character `String` objects. This is in contrast with the C# and JavaScript client, which serialize them as `short` objects. The MessagePack spec itself does not define behavior for `char` objects, so it is up to the library author to determine how to serialize them. The difference in behavior between our clients is a result of the libraries we used for our implementations.
+
 ## Related resources
 
 * [Get Started](xref:tutorials/signalr)
@@ -211,9 +238,11 @@ services.AddSignalR()
 ```
 
 > [!WARNING]
-> We strongly recommend reviewing [CVE-2020-5234](https://github.com/neuecc/MessagePack-CSharp/security/advisories/GHSA-7q36-4xx7-xcxf) and applying the recommended patches. For example, setting the `MessagePackSecurity.Active` static property to `MessagePackSecurity.UntrustedData`. Setting the `MessagePackSecurity.Active` requires manually installing a [1.9.x version of MessagePack](https://www.nuget.org/packages/MessagePack/1.9.3). Installing `MessagePack` 1.9.x upgrades the version SignalR uses. When `MessagePackSecurity.Active` is not set to `MessagePackSecurity.UntrustedData`, a malicious client could cause a denial of service. Set `MessagePackSecurity.Active` in `Program.Main`, as shown in the following code:
+> We strongly recommend reviewing [CVE-2020-5234](https://github.com/neuecc/MessagePack-CSharp/security/advisories/GHSA-7q36-4xx7-xcxf) and applying the recommended patches. For example, setting the `MessagePackSecurity.Active` static property to `MessagePackSecurity.UntrustedData`. Setting the `MessagePackSecurity.Active` requires manually installing a [1.9.x version of MessagePack](https://www.nuget.org/packages/MessagePack/1.9.3). Installing `MessagePack` 1.9.x upgrades the version SignalR uses. `MessagePack` version 2.x introduced breaking changes and is incompatible with SignalR versions 3.1 and earlier. When `MessagePackSecurity.Active` isn't set to `MessagePackSecurity.UntrustedData`, a malicious client could cause a denial of service. Set `MessagePackSecurity.Active` in `Program.Main`, as shown in the following code:
 
 ```csharp
+using MessagePack;
+
 public static void Main(string[] args)
 {
   MessagePackSecurity.Active = MessagePackSecurity.UntrustedData;
@@ -232,8 +261,11 @@ public static void Main(string[] args)
 To enable MessagePack in the .NET Client, install the `Microsoft.AspNetCore.SignalR.Protocols.MessagePack` package and call `AddMessagePackProtocol` on `HubConnectionBuilder`.
 
 ```csharp
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+
 var hubConnection = new HubConnectionBuilder()
-                        .WithUrl("/chatHub")
+                        .WithUrl("/chathub")
                         .AddMessagePackProtocol()
                         .Build();
 ```
@@ -268,7 +300,7 @@ Adding `.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
 
 ```javascript
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chatHub")
+    .withUrl("/chathub")
     .withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
     .build();
 ```
@@ -389,6 +421,8 @@ services.AddSignalR()
 > We strongly recommend reviewing [CVE-2020-5234](https://github.com/neuecc/MessagePack-CSharp/security/advisories/GHSA-7q36-4xx7-xcxf) and applying the recommended patches. For example, setting the `MessagePackSecurity.Active` static property to `MessagePackSecurity.UntrustedData`. Setting the `MessagePackSecurity.Active` requires manually installing a [1.9.x version of MessagePack](https://www.nuget.org/packages/MessagePack/1.9.3). Installing `MessagePack` 1.9.x upgrades the version SignalR uses. When `MessagePackSecurity.Active` is not set to `MessagePackSecurity.UntrustedData`, a malicious client could cause a denial of service. Set `MessagePackSecurity.Active` in `Program.Main`, as shown in the following code:
 
 ```csharp
+using MessagePack;
+
 public static void Main(string[] args)
 {
   MessagePackSecurity.Active = MessagePackSecurity.UntrustedData;
@@ -407,8 +441,11 @@ public static void Main(string[] args)
 To enable MessagePack in the .NET Client, install the `Microsoft.AspNetCore.SignalR.Protocols.MessagePack` package and call `AddMessagePackProtocol` on `HubConnectionBuilder`.
 
 ```csharp
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+
 var hubConnection = new HubConnectionBuilder()
-                        .WithUrl("/chatHub")
+                        .WithUrl("/chathub")
                         .AddMessagePackProtocol()
                         .Build();
 ```
@@ -443,7 +480,7 @@ Adding `.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
 
 ```javascript
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chatHub")
+    .withUrl("/chathub")
     .withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
     .build();
 ```

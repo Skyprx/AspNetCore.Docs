@@ -5,8 +5,8 @@ description: Learn how to use the Configuration API to configure an ASP.NET Core
 monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 3/29/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 1/29/2021
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/configuration/index
 ---
 # Configuration in ASP.NET Core
@@ -25,6 +25,8 @@ Configuration in ASP.NET Core is performed using one or more [configuration prov
 * Custom providers, installed or created
 * Directory files
 * In-memory .NET objects
+
+This topic provides information on configuration in ASP.NET Core. For information on using configuration in console apps, see [.NET Configuration](/dotnet/core/extensions/configuration).
 
 [View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples) ([how to download](xref:index#how-to-download-a-sample))
 
@@ -45,7 +47,7 @@ ASP.NET Core web apps created with [dotnet new](/dotnet/core/tools/dotnet-new) o
 1. Environment variables using the [Environment Variables configuration provider](#evcp).
 1. Command-line arguments using the [Command-line configuration provider](#command-line).
 
-Configuration providers that are added later override previous key settings. For example, if `MyKey` is set in both *appsettings.json* and the environment, the environment value is used. Using the default configuration providers, the  [Command-line configuration provider](#command-line-configuration-provider) overrides all other providers.
+Configuration providers that are added later override previous key settings. For example, if `MyKey` is set in both *appsettings.json* and the environment, the environment value is used. Using the default configuration providers, the  [Command-line configuration provider](#clcp) overrides all other providers.
 
 For more information on `CreateDefaultBuilder`, see [Default builder settings](xref:fundamentals/host/generic-host#default-builder-settings).
 
@@ -73,6 +75,8 @@ The default <xref:Microsoft.Extensions.Configuration.Json.JsonConfigurationProvi
 * In development, *appsettings*.***Development***.*json* configuration overwrites values found in *appsettings.json*.
 * In production, *appsettings*.***Production***.*json* configuration overwrites values found in *appsettings.json*. For example, when deploying the app to Azure.
 
+If a configuration value must be guaranteed, see [GetValue](#getvalue). The preceding example only reads strings and doesn’t support a default value
+
 <a name="optpat"></a>
 
 ### Bind hierarchical configuration data using the options pattern
@@ -83,22 +87,26 @@ Using the [default](#default) configuration, the *appsettings.json* and *appsett
 
 See [JSON configuration provider](#jcp) in this document for information on adding additional JSON configuration files.
 
+## Combining service collection
+
+[!INCLUDE[](~/includes/combine-di.md)]
+
 <a name="security"></a>
 
-## Security and secret manager
+## Security and user secrets
 
 Configuration data guidelines:
 
-* Never store passwords or other sensitive data in configuration provider code or in plain text configuration files. The [Secret manager](xref:security/app-secrets) can be used to store secrets in development.
+* Never store passwords or other sensitive data in configuration provider code or in plain text configuration files. The [Secret Manager](xref:security/app-secrets) tool can be used to store secrets in development.
 * Don't use production secrets in development or test environments.
 * Specify secrets outside of the project so that they can't be accidentally committed to a source code repository.
 
-By [default](#default), [Secret manager](xref:security/app-secrets) reads configuration settings after *appsettings.json* and *appsettings.*`Environment`*.json*.
+By [default](#default), the user secrets configuration source is registered after the JSON configuration sources. Therefore, user secrets keys take precedence over keys in *appsettings.json* and *appsettings.*`Environment`*.json*.
 
 For more information on storing passwords or other sensitive data:
 
 * <xref:fundamentals/environments>
-* <xref:security/app-secrets>:  Includes advice on using environment variables to store sensitive data. The Secret Manager uses the [File configuration provider](#fcp) to store user secrets in a JSON file on the local system.
+* <xref:security/app-secrets>: Includes advice on using environment variables to store sensitive data. The Secret Manager tool uses the [File configuration provider](#fcp) to store user secrets in a JSON file on the local system.
 
 [Azure Key Vault](https://azure.microsoft.com/services/key-vault/) safely stores app secrets for ASP.NET Core apps. For more information, see <xref:security/key-vault-configuration>.
 
@@ -106,7 +114,7 @@ For more information on storing passwords or other sensitive data:
 
 ## Environment variables
 
-Using the [default](#default) configuration, the <xref:Microsoft.Extensions.Configuration.EnvironmentVariables.EnvironmentVariablesConfigurationProvider> loads configuration from environment variable key-value pairs after reading *appsettings.json*, *appsettings.*`Environment`*.json*, and [Secret manager](xref:security/app-secrets). Therefore, key values read from the environment override values read from *appsettings.json*, *appsettings.*`Environment`*.json*, and Secret manager.
+Using the [default](#default) configuration, the <xref:Microsoft.Extensions.Configuration.EnvironmentVariables.EnvironmentVariablesConfigurationProvider> loads configuration from environment variable key-value pairs after reading *appsettings.json*, *appsettings.*`Environment`*.json*, and [user secrets](xref:security/app-secrets). Therefore, key values read from the environment override values read from *appsettings.json*, *appsettings.*`Environment`*.json*, and user secrets.
 
 [!INCLUDE[](~/includes/environmentVarableColon.md)]
 
@@ -129,7 +137,7 @@ The preceding environment settings:
 
 The following [setx](/windows-server/administration/windows-commands/setx) commands can be used to set the environment keys and values on Windows. Unlike `set`, `setx` settings are persisted. `/M` sets the variable in the system environment. If the `/M` switch isn't used, a user environment variable is set.
 
-```cmd
+```console
 setx MyKey "My key from setx Environment" /M
 setx Position__Title Setx_Environment_Editor /M
 setx Position__Name Environment_Rick /M
@@ -171,6 +179,69 @@ For more information, see [Azure Apps: Override app configuration using the Azur
 
 See [Connection string prefixes](#constr) for information on Azure database connection strings.
 
+### Naming of environment variables
+
+Environment variable names reflect the structure of an *appsettings.json* file. Each element in the hierarchy is separated by a double underscore (preferable) or a colon. When the element structure includes an array, the array index should be treated as an additional element name in this path. Consider the following *appsettings.json* file and its equivalent values represented as environment variables.
+
+**appsettings.json**
+
+```json
+{
+    "SmtpServer": "smtp.example.com",
+    "Logging": [
+        {
+            "Name": "ToEmail",
+            "Level": "Critical",
+            "Args": {
+                "FromAddress": "MySystem@example.com",
+                "ToAddress": "SRE@example.com"
+            }
+        },
+        {
+            "Name": "ToConsole",
+            "Level": "Information"
+        }
+    ]
+}
+```
+
+**environment variables**
+
+```console
+setx SmtpServer=smtp.example.com
+setx Logging__0__Name=ToEmail
+setx Logging__0__Level=Critical
+setx Logging__0__Args__FromAddress=MySystem@example.com
+setx Logging__0__Args__ToAddress=SRE@example.com
+setx Logging__1__Name=ToConsole
+setx Logging__1__Level=Information
+```
+
+### Environment variables set in generated launchSettings.json
+
+Environment variables set in *launchSettings.json* override those set in the system environment. For example, the ASP.NET Core web templates generate a *launchSettings.json* file that sets the endpoint configuration to:
+
+```json
+"applicationUrl": "https://localhost:5001;http://localhost:5000"
+```
+
+Configuring the `applicationUrl` sets the `ASPNETCORE_URLS` environment variable and overrides values set in the environment.
+
+### Escape environment variables on Linux
+
+On Linux, the value of URL environment variables must be escaped so `systemd` can parse it. Use the linux tool `systemd-escape` which yields `http:--localhost:5001`
+ 
+ ```cmd
+ groot@terminus:~$ systemd-escape http://localhost:5001
+ http:--localhost:5001
+ ```
+
+### Display environment variables
+
+The following code displays the environment variables and values on application startup, which can be helpful when debugging environment settings:
+
+[!code-csharp[](~/fundamentals/configuration/index/samples_snippets/5.x/Program.cs?name=snippet)]
+
 <a name="clcp"></a>
 
 ## Command-line
@@ -178,7 +249,7 @@ See [Connection string prefixes](#constr) for information on Azure database conn
 Using the [default](#default) configuration, the <xref:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider> loads configuration from command-line argument key-value pairs after the following configuration sources:
 
 * *appsettings.json* and *appsettings*.`Environment`.*json* files.
-* [App secrets (Secret Manager)](xref:security/app-secrets) in the Development environment.
+* [App secrets](xref:security/app-secrets) in the Development environment.
 * Environment variables.
 
 By [default](#default), configuration values set on the command-line override configuration values set with all the other configuration providers.
@@ -228,14 +299,6 @@ To use a switch mappings dictionary, pass it into the call to `AddCommandLine`:
 The following code shows the key values for the replaced keys:
 
 [!code-csharp[](index/samples/3.x/ConfigSample/Pages/Test3.cshtml.cs?name=snippet)]
-
-Run the following command to test the key replacement:
-
-```dotnetcli
-dotnet run -k1=value1 -k2 value2 --alt3=value2 /alt4=value3 --alt5 value5 /alt6 value6
-```
-
-Note: Currently, `=` cannot be used to set key-replacement values with a single dash `-`. See [this GitHub issue](https://github.com/dotnet/extensions/issues/3059).
 
 The following command works to test key replacement:
 
@@ -298,7 +361,7 @@ The following table shows the configuration providers available to ASP.NET Core 
 | [File configuration provider](#file-configuration-provider) | INI, JSON, and XML files |
 | [Key-per-file configuration provider](#key-per-file-configuration-provider) | Directory files |
 | [Memory configuration provider](#memory-configuration-provider) | In-memory collections |
-| [Secret Manager](xref:security/app-secrets)  | File in the user profile directory |
+| [User secrets](xref:security/app-secrets) | File in the user profile directory |
 
 Configuration sources are read in the order that their configuration providers are specified. Order configuration providers in code to suit the priorities for the underlying configuration sources that the app requires.
 
@@ -306,7 +369,7 @@ A typical sequence of configuration providers is:
 
 1. *appsettings.json*
 1. *appsettings*.`Environment`.*json*
-1. [Secret Manager](xref:security/app-secrets)
+1. [User secrets](xref:security/app-secrets)
 1. Environment variables using the [Environment Variables configuration provider](#evcp).
 1. Command-line arguments using the [Command-line configuration provider](#command-line-configuration-provider).
 
@@ -338,6 +401,37 @@ When an environment variable is discovered and loaded into configuration with an
 | `MYSQLCONNSTR_{KEY}`     | `ConnectionStrings:{KEY}`   | Key: `ConnectionStrings:{KEY}_ProviderName`:<br>Value: `MySql.Data.MySqlClient` |
 | `SQLAZURECONNSTR_{KEY}`  | `ConnectionStrings:{KEY}`   | Key: `ConnectionStrings:{KEY}_ProviderName`:<br>Value: `System.Data.SqlClient`  |
 | `SQLCONNSTR_{KEY}`       | `ConnectionStrings:{KEY}`   | Key: `ConnectionStrings:{KEY}_ProviderName`:<br>Value: `System.Data.SqlClient`  |
+
+<a name="fcp"></a>
+
+## File configuration provider
+
+<xref:Microsoft.Extensions.Configuration.FileConfigurationProvider> is the base class for loading configuration from the file system. The following configuration providers derive from `FileConfigurationProvider`:
+
+* [INI configuration provider](#ini-configuration-provider)
+* [JSON configuration provider](#jcp)
+* [XML configuration provider](#xml-configuration-provider)
+
+### INI configuration provider
+
+The <xref:Microsoft.Extensions.Configuration.Ini.IniConfigurationProvider> loads configuration from INI file key-value pairs at runtime.
+
+The following code clears all the configuration providers and adds several configuration providers:
+
+[!code-csharp[](index/samples/3.x/ConfigSample/ProgramINI.cs?name=snippet&highlight=10-30)]
+
+In the preceding code, settings in the *MyIniConfig.ini* and  *MyIniConfig*.`Environment`.*ini* files are overridden by settings in the:
+
+* [Environment variables configuration provider](#evcp)
+* [Command-line configuration provider](#clcp).
+
+The [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) contains the following *MyIniConfig.ini* file:
+
+[!code-ini[](index/samples/3.x/ConfigSample/MyIniConfig.ini)]
+
+The following code from the [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) displays several of the preceding configurations settings:
+
+[!code-csharp[](index/samples/3.x/ConfigSample/Pages/Test.cshtml.cs?name=snippet)]
 
 <a name="jcp"></a>
 
@@ -375,37 +469,6 @@ In the preceding code, settings in the *MyConfig.json* and  *MyConfig*.`Environm
 The [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) contains the following  *MyConfig.json* file:
 
 [!code-json[](index/samples/3.x/ConfigSample/MyConfig.json)]
-
-The following code from the [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) displays several of the preceding configurations settings:
-
-[!code-csharp[](index/samples/3.x/ConfigSample/Pages/Test.cshtml.cs?name=snippet)]
-
-<a name="fcp"></a>
-
-## File configuration provider
-
-<xref:Microsoft.Extensions.Configuration.FileConfigurationProvider> is the base class for loading configuration from the file system. The following configuration providers derive from `FileConfigurationProvider`:
-
-* [INI configuration provider](#ini-configuration-provider)
-* [JSON configuration provider](#jcp)
-* [XML configuration provider](#xml-configuration-provider)
-
-### INI configuration provider
-
-The <xref:Microsoft.Extensions.Configuration.Ini.IniConfigurationProvider> loads configuration from INI file key-value pairs at runtime.
-
-The following code clears all the configuration providers and adds several configuration providers:
-
-[!code-csharp[](index/samples/3.x/ConfigSample/ProgramINI.cs?name=snippet&highlight=10-30)]
-
-In the preceding code, settings in the *MyIniConfig.ini* and  *MyIniConfig*.`Environment`.*ini* files are overridden by settings in the:
-
-* [Environment variables configuration provider](#evcp)
-* [Command-line configuration provider](#clcp).
-
-The [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) contains the following *MyIniConfig.ini* file:
-
-[!code-ini[](index/samples/3.x/ConfigSample/MyIniConfig.ini)]
 
 The following code from the [sample download](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/configuration/index/samples/3.x/ConfigSample) displays several of the preceding configurations settings:
 
@@ -498,6 +561,38 @@ The following code from the [sample download](https://github.com/dotnet/AspNetCo
 In the preceding code, `config.AddInMemoryCollection(Dict)` is added after the [default configuration providers](#default). For an example of ordering the configuration providers, see [JSON configuration provider](#jcp).
 
 See [Bind an array](#boa) for another example using `MemoryConfigurationProvider`.
+
+::: moniker-end
+::: moniker range=">= aspnetcore-5.0"
+
+<a name="kestrel"></a>
+
+## Kestrel endpoint configuration
+
+Kestrel specific endpoint configuration overrides all [cross-server](xref:fundamentals/servers/index) endpoint configurations. Cross-server endpoint configurations include:
+
+  * [UseUrls](xref:fundamentals/host/web-host#server-urls)
+  * `--urls` on the [command line](xref:fundamentals/configuration/index#command-line)
+  * The [environment variable](xref:fundamentals/configuration/index#environment-variables) `ASPNETCORE_URLS`
+
+Consider the following *appsettings.json* file used in an ASP.NET Core web app:
+
+[!code-json[](~/fundamentals/configuration/index/samples_snippets/5.x/appsettings.json?highlight=2-8)]
+
+When the preceding highlighted markup is used in an ASP.NET Core web app ***and*** the app is launched on the command line with the following cross-server endpoint configuration:
+
+`dotnet run --urls="https://localhost:7777"`
+
+Kestrel binds to the endpoint configured specifically for Kestrel in the *appsettings.json* file (`https://localhost:9999`) and not `https://localhost:7777`.
+
+Consider the Kestrel specific endpoint configured as an environment variable:
+
+`set Kestrel__Endpoints__Https__Url=https://localhost:8888`
+
+In the preceding environment variable, `Https` is the name of the Kestrel specific endpoint. The preceding *appsettings.json* file also defines a Kestrel specific endpoint named `Https`. By [default](#default-configuration), environment variables using the [Environment Variables configuration provider](#evcp) are read after *appsettings.*`Environment`*.json*, therefore, the preceding environment variable is used for the `Https` endpoint.
+
+::: moniker-end
+::: moniker range=">= aspnetcore-3.0"
 
 ## GetValue
 
@@ -658,7 +753,7 @@ An `AddEFConfiguration` extension method permits adding the configuration source
 
 The following code shows how to use the custom `EFConfigurationProvider` in *Program.cs*:
 
-[!code-csharp[](index/samples/3.x/ConfigurationSample/Program.cs?name=snippet_Program&highlight=29-30)]
+[!code-csharp[](index/samples_snippets/3.x/ConfigurationSample/Program.cs?highlight=7-8)]
 
 <a name="acs"></a>
 
@@ -716,10 +811,10 @@ Before the app is configured and started, a *host* is configured and launched. T
 
 ## Default host configuration
 
-For details on the default configuration when using the [Web Host](xref:fundamentals/host/web-host), see the [ASP.NET Core 2.2 version of this topic](/aspnet/core/fundamentals/configuration/?view=aspnetcore-2.2).
+For details on the default configuration when using the [Web Host](xref:fundamentals/host/web-host), see the [ASP.NET Core 2.2 version of this topic](?view=aspnetcore-2.2&preserve-view=true).
 
 * Host configuration is provided from:
-  * Environment variables prefixed with `DOTNET_` (for example, `DOTNET_ENVIRONMENT`) using the [Environment Variables configuration provider](#environment-variables-configuration-provider). The prefix (`DOTNET_`) is stripped when the configuration key-value pairs are loaded.
+  * Environment variables prefixed with `DOTNET_` (for example, `DOTNET_ENVIRONMENT`) using the [Environment Variables configuration provider](#environment-variables). The prefix (`DOTNET_`) is stripped when the configuration key-value pairs are loaded.
   * Command-line arguments using the [Command-line configuration provider](#command-line-configuration-provider).
 * Web Host default configuration is established (`ConfigureWebHostDefaults`):
   * Kestrel is used as the web server and configured using the app's configuration providers.
@@ -738,6 +833,8 @@ This topic only pertains to *app configuration*. Other aspects of running and ho
   * <xref:host-and-deploy/iis/index>
   * <xref:host-and-deploy/aspnet-core-module>
 
+Environment variables set in *launchSettings.json* override those set in the system environment.
+
 For more information on migrating app configuration from earlier versions of ASP.NET, see <xref:migration/proper-to-2x/index#store-configurations>.
 
 ## Add configuration from an external assembly
@@ -746,8 +843,9 @@ An <xref:Microsoft.AspNetCore.Hosting.IHostingStartup> implementation allows add
 
 ## Additional resources
 
-* [Configuration source code](https://github.com/dotnet/extensions/tree/master/src/Configuration)
+* [Configuration source code](https://github.com/dotnet/runtime/tree/master/src/libraries/Microsoft.Extensions.Configuration)
 * <xref:fundamentals/configuration/options>
+* <xref:blazor/fundamentals/configuration>
 
 ::: moniker-end
 
@@ -805,7 +903,7 @@ The following applies to apps using the [Web Host](xref:fundamentals/host/web-ho
 * App configuration is provided from:
   * *appsettings.json* using the [File Configuration Provider](#file-configuration-provider).
   * *appsettings.{Environment}.json* using the [File Configuration Provider](#file-configuration-provider).
-  * [Secret Manager](xref:security/app-secrets) when the app runs in the `Development` environment using the entry assembly.
+  * [User secrets](xref:security/app-secrets) when the app runs in the `Development` environment using the entry assembly.
   * Environment variables using the [Environment Variables Configuration Provider](#environment-variables-configuration-provider).
   * Command-line arguments using the [Command-line Configuration Provider](#command-line-configuration-provider).
 
@@ -820,7 +918,7 @@ Adopt the following practices to secure sensitive configuration data:
 For more information, see the following topics:
 
 * <xref:fundamentals/environments>
-* <xref:security/app-secrets>: Includes advice on using environment variables to store sensitive data. The Secret Manager uses the File Configuration Provider to store user secrets in a JSON file on the local system. The File Configuration Provider is described later in this topic.
+* <xref:security/app-secrets>: Includes advice on using environment variables to store sensitive data. The Secret Manager tool uses the File Configuration Provider to store user secrets in a JSON file on the local system. The File Configuration Provider is described later in this topic.
 
 [Azure Key Vault](https://azure.microsoft.com/services/key-vault/) safely stores app secrets for ASP.NET Core apps. For more information, see <xref:security/key-vault-configuration>.
 
@@ -895,7 +993,7 @@ Configuration providers can't utilize DI, as it's not available when they're set
 Configuration keys adopt the following conventions:
 
 * Keys are case-insensitive. For example, `ConnectionString` and `connectionstring` are treated as equivalent keys.
-* If a value for the same key is set by the same or different configuration providers, the last value set on the key is the value used.
+* If a value for the same key is set by the same or different configuration providers, the last value set on the key is the value used. For more information on duplicate JSON keys, see [this GitHub issue](https://github.com/dotnet/extensions/issues/2381).
 * Hierarchical keys
   * Within the Configuration API, a colon separator (`:`) works on all platforms.
   * In environment variables, a colon separator may not work on all platforms. A double underscore (`__`) is supported by all platforms and is automatically converted into a colon.
@@ -923,7 +1021,7 @@ The following table shows the configuration providers available to ASP.NET Core 
 | [File Configuration Provider](#file-configuration-provider) | Files (INI, JSON, XML) |
 | [Key-per-file Configuration Provider](#key-per-file-configuration-provider) | Directory files |
 | [Memory Configuration Provider](#memory-configuration-provider) | In-memory collections |
-| [User secrets (Secret Manager)](xref:security/app-secrets) (*Security* topics) | File in the user profile directory |
+| [User secrets](xref:security/app-secrets) (*Security* topics) | File in the user profile directory |
 
 Configuration sources are read in the order that their configuration providers are specified at startup. The configuration providers described in this topic are described in alphabetical order, not in the order that the code arranges them. Order configuration providers in code to suit the priorities for the underlying configuration sources that the app requires.
 
@@ -931,7 +1029,7 @@ A typical sequence of configuration providers is:
 
 1. Files (*appsettings.json*, *appsettings.{Environment}.json*, where `{Environment}` is the app's current hosting environment)
 1. [Azure Key Vault](xref:security/key-vault-configuration)
-1. [User secrets (Secret Manager)](xref:security/app-secrets) (Development environment only)
+1. [User secrets](xref:security/app-secrets) (Development environment only)
 1. Environment variables
 1. Command-line arguments
 
@@ -1007,7 +1105,7 @@ To activate command-line configuration, the <xref:Microsoft.Extensions.Configura
 `CreateDefaultBuilder` also loads:
 
 * Optional configuration from *appsettings.json* and *appsettings.{Environment}.json* files.
-* [User secrets (Secret Manager)](xref:security/app-secrets) in the Development environment.
+* [User secrets](xref:security/app-secrets) in the Development environment.
 * Environment variables.
 
 `CreateDefaultBuilder` adds the Command-line Configuration Provider last. Command-line arguments passed at runtime override configuration set by the other providers.
@@ -1122,7 +1220,7 @@ To activate environment variables configuration, call the <xref:Microsoft.Extens
 
 * App configuration from unprefixed environment variables by calling `AddEnvironmentVariables` without a prefix.
 * Optional configuration from *appsettings.json* and *appsettings.{Environment}.json* files.
-* [User secrets (Secret Manager)](xref:security/app-secrets) in the Development environment.
+* [User secrets](xref:security/app-secrets) in the Development environment.
 * Command-line arguments.
 
 The Environment Variables Configuration Provider is called after configuration is established from user secrets and *appsettings* files. Calling the provider in this position allows the environment variables read at runtime to override configuration set by user secrets and *appsettings* files.
@@ -1282,7 +1380,7 @@ For more information, see the [Default configuration](#default-configuration) se
 `CreateDefaultBuilder` also loads:
 
 * Environment variables.
-* [User secrets (Secret Manager)](xref:security/app-secrets) in the Development environment.
+* [User secrets](xref:security/app-secrets) in the Development environment.
 * Command-line arguments.
 
 The JSON Configuration Provider is established first. Therefore, user secrets, environment variables, and command-line arguments override configuration set by the *appsettings* files.

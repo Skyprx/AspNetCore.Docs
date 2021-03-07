@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
 ms.date: 08/26/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/logging/loggermessage
 ---
 # High-performance logging with LoggerMessage in ASP.NET Core
@@ -140,7 +140,7 @@ The sample app has a **Clear All** button for deleting all of the quotes in the 
 
 Enable `IncludeScopes` in the console logger section of *appsettings.json*:
 
-[!code-csharp[](loggermessage/samples/3.x/LoggerMessageSample/appsettings.json?highlight=3-5)]
+[!code-json[](loggermessage/samples/3.x/LoggerMessageSample/appsettings.json?highlight=3-5)]
 
 To create a log scope, add a field to hold a <xref:System.Func%601> delegate for the scope. The sample app creates a field called `_allQuotesDeletedScope` (*Internal/LoggerExtensions.cs*):
 
@@ -308,7 +308,7 @@ The sample app has a **Clear All** button for deleting all of the quotes in the 
 
 Enable `IncludeScopes` in the console logger section of *appsettings.json*:
 
-[!code-csharp[](loggermessage/samples/2.x/LoggerMessageSample/appsettings.json?highlight=3-5)]
+[!code-json[](loggermessage/samples/2.x/LoggerMessageSample/appsettings.json?highlight=3-5)]
 
 To create a log scope, add a field to hold a <xref:System.Func%601> delegate for the scope. The sample app creates a field called `_allQuotesDeletedScope` (*Internal/LoggerExtensions.cs*):
 

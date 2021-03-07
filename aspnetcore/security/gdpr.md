@@ -5,7 +5,7 @@ description: Learn how to access the GDPR extension points in a ASP.NET Core web
 ms.author: riande
 ms.custom: mvc
 ms.date: 07/11/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/gdpr
 ---
 # EU General Data Protection Regulation (GDPR) support in ASP.NET Core
@@ -73,7 +73,7 @@ Razor Pages and MVC projects created with the project templates include the foll
 
 The *\_CookieConsentPartial.cshtml* partial view:
 
-[!code-html[](gdpr/sample/RP2.2/Pages/Shared/_CookieConsentPartial.cshtml)]
+[!code-cshtml[](gdpr/sample/RP2.2/Pages/Shared/_CookieConsentPartial.cshtml)]
 
 This partial:
 

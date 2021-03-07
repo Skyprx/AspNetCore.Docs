@@ -3,9 +3,9 @@ title: Reusable Razor UI in class libraries with ASP.NET Core
 author: Rick-Anderson
 description: Explains how to create reusable Razor UI using partial views in a class library in ASP.NET Core.
 ms.author: riande
-ms.date: 01/25/2020
+ms.date: 01/19/2021
 ms.custom: "mvc, seodec18"
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: razor-pages/ui-class
 ---
 # Create reusable UI using the Razor class library project in ASP.NET Core
@@ -14,7 +14,7 @@ By [Rick Anderson](https://twitter.com/RickAndMSFT)
 
 ::: moniker range=">= aspnetcore-3.0"
 
-Razor views, pages, controllers, page models, [Razor components](xref:blazor/class-libraries), [View components](xref:mvc/views/view-components), and data models can be built into a Razor class library (RCL). The RCL can be packaged and reused. Applications can include the RCL and override the views and pages it contains. When a view, partial view, or Razor Page is found in both the web app and the RCL, the Razor markup (*.cshtml* file) in the web app takes precedence.
+Razor views, pages, controllers, page models, [Razor components](xref:blazor/components/class-libraries), [View components](xref:mvc/views/view-components), and data models can be built into a Razor class library (RCL). The RCL can be packaged and reused. Applications can include the RCL and override the views and pages it contains. When a view, partial view, or Razor Page is found in both the web app and the RCL, the Razor markup (*.cshtml* file) in the web app takes precedence.
 
 [View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/razor-pages/ui-class/samples) ([how to download](xref:index#how-to-download-a-sample))
 
@@ -77,6 +77,14 @@ Suppose *RazorUIClassLib/Pages/Shared* contains two partial files: *_Header.csht
   @RenderBody()
   <partial name="_Footer">
 </body>
+```
+
+Add the *_ViewStart.cshtml* file to the RCL project's *Pages* folder to use the *_Layout.cshtml* file from the host web app:
+
+```cshtml
+@{
+    Layout = "_Layout";
+}
 ```
 
 ## Create an RCL with static assets
@@ -181,7 +189,7 @@ When the app is published, the companion assets from all referenced projects and
 
 ::: moniker range="< aspnetcore-3.0"
 
-Razor views, pages, controllers, page models, [Razor components](xref:blazor/class-libraries), [View components](xref:mvc/views/view-components), and data models can be built into a Razor class library (RCL). The RCL can be packaged and reused. Applications can include the RCL and override the views and pages it contains. When a view, partial view, or Razor Page is found in both the web app and the RCL, the Razor markup (*.cshtml* file) in the web app takes precedence.
+Razor views, pages, controllers, page models, [Razor components](xref:blazor/components/class-libraries), [View components](xref:mvc/views/view-components), and data models can be built into a Razor class library (RCL). The RCL can be packaged and reused. Applications can include the RCL and override the views and pages it contains. When a view, partial view, or Razor Page is found in both the web app and the RCL, the Razor markup (*.cshtml* file) in the web app takes precedence.
 
 [View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/razor-pages/ui-class/samples) ([how to download](xref:index#how-to-download-a-sample))
 
@@ -387,4 +395,15 @@ Suppose *RazorUIClassLib/Pages/Shared* contains two partial files: *_Header.csht
 
 ## Additional resources
 
-* <xref:blazor/class-libraries>
+::: moniker range=">= aspnetcore-5.0"
+
+* <xref:blazor/components/class-libraries>
+* <xref:blazor/components/css-isolation#razor-class-library-rcl-support>
+
+::: moniker-end
+
+::: moniker range="< aspnetcore-5.0"
+
+* <xref:blazor/components/class-libraries>
+
+::: moniker-end

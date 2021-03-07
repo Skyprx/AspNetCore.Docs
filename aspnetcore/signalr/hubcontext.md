@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: bradyg
 ms.custom: mvc
 ms.date: 11/12/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR, IHubContext]
 uid: signalr/hubcontext
 ---
 # Send messages from outside a hub
@@ -42,7 +42,7 @@ Access the `IHubContext` within the middleware pipeline like so:
 app.Use(async (context, next) =>
 {
     var hubContext = context.RequestServices
-                            .GetRequiredService<IHubContext<MyHub>>();
+                            .GetRequiredService<IHubContext<ChatHub>>();
     //...
     
     if (next != null)
@@ -58,7 +58,7 @@ app.Use(async (context, next) =>
 ### Get an instance of IHubContext from IHost
 
 Accessing an `IHubContext` from the web host is useful for
-integrating with areas outside of ASP.NET Core, for example, using 3rd party dependency injection frameworks:
+integrating with areas outside of ASP.NET Core, for example, using third-party dependency injection frameworks:
 
 ```csharp
     public class Program
@@ -66,7 +66,7 @@ integrating with areas outside of ASP.NET Core, for example, using 3rd party dep
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var hubContext = host.Services.GetService(typeof(IHubContext<MyHub>));
+            var hubContext = host.Services.GetService(typeof(IHubContext<ChatHub>));
             host.Run();
         }
 
@@ -92,12 +92,14 @@ public class ChatController : Controller
         _strongChatHubContext = chatHubContext;
     }
 
-    public async Task SendMessage(string message)
+    public async Task SendMessage(string user, string message)
     {
-        await _strongChatHubContext.Clients.All.ReceiveMessage(message);
+        await _strongChatHubContext.Clients.All.ReceiveMessage(user, message);
     }
 }
 ```
+
+See [Strongly typed hubs](xref:signalr/hubs#strongly-typed-hubs) for more information.
 
 ## Related resources
 

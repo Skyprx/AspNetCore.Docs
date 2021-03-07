@@ -28,7 +28,8 @@
           "**/*.jpg",
           "**/*.gif",
           "**/*.svg",
-          "**/*.pdf"
+          "**/*.pdf",
+          "**/zone-pivot-groups.json"
         ],
         "exclude": [
           "**/obj/**",
@@ -52,10 +53,11 @@
       "feedback_system": "GitHub",
       "ms.prod": "aspnet-core",
       "ms.topic": "conceptual",
-      "uhfHeaderId": [],
+      "uhfHeaderId": "MSDocsHeader-AspNet",
       "searchScope": [
         "ASP.NET Core"
-      ]
+      ],
+      "zone_pivot_group_filename": "core/zone-pivot-groups.json"
     },
     "fileMetadata": {
       "author": {
@@ -73,7 +75,7 @@
         "getting-started/**/**.md": "aspnetcore-getstarted",
         "grpc/**/**.md": "aspnetcore-grpc",
         "host-and-deploy/**/**.md": "aspnetcore-hostdeploy",
-        "index.md": "aspnetcore",
+        "introduction-to-aspnet-core.md": "aspnetcore",
         "migration/**/**.md": "aspnetcore-migration",
         "mobile/**/**.md": "aspnetcore-mobile",
         "mvc/**/**.md": "aspnetcore-mvc",

@@ -4,8 +4,8 @@ author: scottaddie
 description: Learn how to optimize static resources in an ASP.NET Core web application by applying bundling and minification techniques.
 ms.author: scaddie
 ms.custom: mvc
-ms.date: 04/15/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 09/02/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: client-side/bundling-and-minification
 ---
 # Bundle and minify static assets in ASP.NET Core
@@ -61,6 +61,9 @@ Browsers are fairly verbose with regard to HTTP request headers. The total bytes
 The MVC and Razor Pages project templates provide a solution for bundling and minification consisting of a JSON configuration file. Third-party tools, such as the [Grunt](xref:client-side/using-grunt) task runner, accomplish the same tasks with a bit more complexity. A third-party tool is a great fit when your development workflow requires processing beyond bundling and minification&mdash;such as linting and image optimization. By using design-time bundling and minification, the minified files are created prior to the app's deployment. Bundling and minifying before deployment provides the advantage of reduced server load. However, it's important to recognize that design-time bundling and minification increases build complexity and only works with static files.
 
 ## Configure bundling and minification
+
+> [!NOTE]
+> The [BuildBundlerMinifier](https://www.nuget.org/packages/BuildBundlerMinifier) NuGet package needs to be added to your project for this to work.
 
 ::: moniker range="<= aspnetcore-2.0"
 
@@ -161,13 +164,13 @@ Add a *package.json* file, with the following `devDependencies`, to the project 
 
 Install the dependencies by running the following command at the same level as *package.json*:
 
-```console
+```bash
 npm i
 ```
 
 Install the Gulp CLI as a global dependency:
 
-```console
+```bash
 npm i -g gulp-cli
 ```
 
@@ -177,9 +180,12 @@ Copy the *gulpfile.js* file below to the project root:
 
 ### Run Gulp tasks
 
-To trigger the Gulp minification task before the project builds in Visual Studio, add the following [MSBuild Target](/visualstudio/msbuild/msbuild-targets) to the *.csproj file:
+To trigger the Gulp minification task before the project builds in Visual Studio:
 
-[!code-xml[](../client-side/bundling-and-minification/samples/BuildBundlerMinifierApp/BuildBundlerMinifierApp.csproj?range=14-16)]
+1. Install the [BuildBundlerMinifier](https://www.nuget.org/packages/BuildBundlerMinifier) NuGet package.
+1. Add the following [MSBuild Target](/visualstudio/msbuild/msbuild-targets) to the project file:
+
+    [!code-xml[](../client-side/bundling-and-minification/samples/BuildBundlerMinifierApp/BuildBundlerMinifierApp.csproj?range=14-16)]
 
 In this example, any tasks defined within the `MyPreCompileTarget` target run before the predefined `Build` target. Output similar to the following appears in Visual Studio's Output window:
 

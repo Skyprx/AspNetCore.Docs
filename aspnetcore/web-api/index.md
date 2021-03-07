@@ -5,8 +5,8 @@ description: Learn the basics of creating a web API in ASP.NET Core.
 monikerRange: '>= aspnetcore-2.1'
 ms.author: scaddie
 ms.custom: mvc
-ms.date: 02/02/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 07/20/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: web-api/index
 ---
 # Create web APIs with ASP.NET Core
@@ -85,16 +85,12 @@ The *Problem details for error status codes* feature requires a [compatibility v
 
 ::: moniker-end
 
-::: moniker range="= aspnetcore-2.1"
-
 * [Attribute routing requirement](#attribute-routing-requirement)
 * [Automatic HTTP 400 responses](#automatic-http-400-responses)
 * [Binding source parameter inference](#binding-source-parameter-inference)
 * [Multipart/form-data request inference](#multipartform-data-request-inference)
 
 These features require a [compatibility version](xref:mvc/compatibility-version) of 2.1 or later.
-
-::: moniker-end
 
 ### Attribute on specific controllers
 
@@ -219,9 +215,11 @@ The `ValidationProblemDetails` type:
 
 ::: moniker-end
 
+To make automatic and custom responses consistent, call the <xref:Microsoft.AspNetCore.Mvc.ControllerBase.ValidationProblem%2A> method instead of <xref:System.Web.Http.ApiController.BadRequest%2A>. `ValidationProblem` returns a <xref:Microsoft.AspNetCore.Mvc.ValidationProblemDetails> object as well as the automatic response.
+
 ### Log automatic 400 responses
 
-See [How to log automatic 400 responses on model validation errors (aspnet/AspNetCore.Docs #12157)](https://github.com/dotnet/AspNetCore.Docs/issues/12157).
+See [How to log automatic 400 responses on model validation errors (dotnet/AspNetCore.Docs#12157)](https://github.com/dotnet/AspNetCore.Docs/issues/12157).
 
 ### Disable automatic 400 response
 
@@ -425,3 +423,4 @@ The `[Consumes]` attribute is applied to both actions. The `PostJson` action han
 * <xref:web-api/advanced/formatting>
 * <xref:tutorials/web-api-help-pages-using-swagger>
 * <xref:mvc/controllers/routing>
+* [Microsoft Learn: Create a web API with ASP.NET Core](/learn/modules/build-web-api-aspnet-core/)

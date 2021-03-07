@@ -5,7 +5,7 @@ description: Learn how view components are used in ASP.NET Core and how to add t
 ms.author: riande
 ms.custom: mvc
 ms.date: 12/18/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: mvc/views/view-components
 ---
 # View components in ASP.NET Core
@@ -37,7 +37,7 @@ View components are intended anywhere you have reusable rendering logic that's t
 
 A view component consists of two parts: the class (typically derived from [ViewComponent](/dotnet/api/microsoft.aspnetcore.mvc.viewcomponent)) and the result it returns (typically a view). Like controllers, a view component can be a POCO, but most developers will want to take advantage of the methods and properties available by deriving from `ViewComponent`.
 
-When considering if view components meet an app's specifications, consider using Razor Components instead. Razor Components also combine markup with C# code to produce reusable UI units. Razor Components are designed for developer productivity when providing client-side UI logic and composition. For more information, see <xref:blazor/components>.
+When considering if view components meet an app's specifications, consider using Razor components instead. Razor components also combine markup with C# code to produce reusable UI units. Razor components are designed for developer productivity when providing client-side UI logic and composition. For more information, see <xref:blazor/components/index>. For information on how to incorporate Razor components into an MVC or Razor Pages app, see <xref:blazor/components/prerendering-and-integration?pivots=server>.
 
 ## Creating a view component
 
@@ -87,7 +87,7 @@ We recommend you name the view file *Default.cshtml* and use the *Views/Shared/C
 
 To customize the view search path, modify Razor's <xref:Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions.ViewLocationFormats> collection. For example, to search for views within the path "/Components/{View Component Name}/{View Name}", add a new item to the collection:
 
-[!code-cs[](view-components/samples_snapshot/2.x/Startup.cs?name=snippet_ViewLocationFormats&highlight=4)]
+[!code-csharp[](view-components/samples_snapshot/2.x/Startup.cs?name=snippet_ViewLocationFormats&highlight=4)]
 
 In the preceding code, the placeholder "{0}" represents the path "Components/{View Component Name}/{View Name}".
 

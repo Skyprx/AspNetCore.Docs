@@ -5,8 +5,8 @@ description: Learn how to control app behavior across multiple environments in A
 monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 4/12/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 7/1/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/environments
 ---
 # Use multiple environments in ASP.NET Core
@@ -89,7 +89,7 @@ The *launchSettings.json* file:
 * Is not deployed.
 * contains profile settings.
 
-The following JSON shows the *launchSettings.json* file for an ASP.NET Core web projected named *EnvironmentsSample* created with Visual Studio or `dotnet new`:
+The following JSON shows the *launchSettings.json* file for an ASP.NET Core web project named *EnvironmentsSample* created with Visual Studio or `dotnet new`:
 
 [!code-json[](environments/3.1sample/EnvironmentsSample/Properties/launchSettingsCopy.json)]
 
@@ -114,7 +114,14 @@ The following *launchSettings.json* file contains multiple profiles:
 
 [!code-json[](environments/3.1sample/EnvironmentsSample/Properties/launchSettings.json)]
 
-Profiles can be selected from Visual Studio or using `dotnet run --launch-profile <Profile Name>`.
+Profiles can be selected:
+
+* From the Visual Studio UI.
+* Using the [`dotnet run`](/dotnet/core/tools/dotnet-run) command in a command shell with the `--launch-profile` option set to the profile's name. *This approach only supports Kestrel profiles.*
+
+  ```dotnetcli
+  dotnet run --launch-profile "SampleApp"
+  ```
 
 > [!WARNING]
 > *launchSettings.json* shouldn't store secrets. The [Secret Manager tool](xref:security/app-secrets) can be used to store secrets for local development.
@@ -252,7 +259,7 @@ export ASPNETCORE_ENVIRONMENT=Staging
 
 #### Linux
 
-For Linux distros, use the `export` command at a command prompt for session-based variable settings and *bash_profile* file for machine-level environment settings.
+For Linux distributions, use the `export` command at a command prompt for session-based variable settings and *bash_profile* file for machine-level environment settings.
 
 ### Set the environment in code
 
@@ -289,7 +296,7 @@ Use the [UseStartup(IWebHostBuilder, String)](/dotnet/api/microsoft.aspnetcore.h
 
 ### Startup method conventions
 
-[Configure](/dotnet/api/microsoft.aspnetcore.hosting.startupbase.configure) and [ConfigureServices](/dotnet/api/microsoft.aspnetcore.hosting.startupbase.configureservices) support environment-specific versions of the form `Configure<EnvironmentName>` and `Configure<EnvironmentName>Services`. This approach is useful when the app requires configuring startup for several environments with many code differences per environment:
+[Configure](xref:Microsoft.AspNetCore.Hosting.StartupBase.Configure%2A) and [ConfigureServices](xref:Microsoft.AspNetCore.Hosting.StartupBase.ConfigureServices%2A) support environment-specific versions of the form `Configure<EnvironmentName>` and `Configure<EnvironmentName>Services`. If a matching `Configure<EnvironmentName>Services` or `Configure<EnvironmentName>` method isn't found, the `ConfigureServices` or `Configure` method is used, respectively. This approach is useful when the app requires configuring startup for several environments with many code differences per environment:
 
 [!code-csharp[](environments/3.1sample/EnvironmentsSample/StartupMethodConventions.cs?name=snippet)]
 
@@ -297,6 +304,8 @@ Use the [UseStartup(IWebHostBuilder, String)](/dotnet/api/microsoft.aspnetcore.h
 
 * <xref:fundamentals/startup>
 * <xref:fundamentals/configuration/index>
+* <xref:blazor/fundamentals/environments>
+
 ::: moniker-end
 
 ::: moniker range="< aspnetcore-3.0"
@@ -572,7 +581,7 @@ export ASPNETCORE_ENVIRONMENT=Development
 
 #### Linux
 
-For Linux distros, use the `export` command at a command prompt for session-based variable settings and *bash_profile* file for machine-level environment settings.
+For Linux distributions, use the `export` command at a command prompt for session-based variable settings and *bash_profile* file for machine-level environment settings.
 
 ### Set the environment in code
 
@@ -584,7 +593,7 @@ To load configuration by environment, we recommend:
 
 * *appsettings* files (*appsettings.{Environment}.json*). See <xref:fundamentals/configuration/index#json-configuration-provider>.
 * Environment variables (set on each system where the app is hosted). See <xref:fundamentals/host/web-host#environment> and <xref:security/app-secrets#environment-variables>.
-* Secret Manager (in the Development environment only). See <xref:security/app-secrets>.
+* User secrets (in the Development environment only). See <xref:security/app-secrets>.
 
 ## Environment-based Startup class and methods
 
@@ -719,7 +728,7 @@ public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 
 ### Startup method conventions
 
-[Configure](/dotnet/api/microsoft.aspnetcore.hosting.startupbase.configure) and [ConfigureServices](/dotnet/api/microsoft.aspnetcore.hosting.startupbase.configureservices) support environment-specific versions of the form `Configure<EnvironmentName>` and `Configure<EnvironmentName>Services`. This approach is useful when the app requires configuring startup for several environments with many code differences per environment.
+[Configure](xref:Microsoft.AspNetCore.Hosting.StartupBase.Configure%2A) and [ConfigureServices](xref:Microsoft.AspNetCore.Hosting.StartupBase.ConfigureServices%2A) support environment-specific versions of the form `Configure<EnvironmentName>` and `Configure<EnvironmentName>Services`. If a matching `Configure<EnvironmentName>Services` or `Configure<EnvironmentName>` method isn't found, the `ConfigureServices` or `Configure` method is used, respectively. This approach is useful when the app requires configuring startup for several environments with many code differences per environment:
 
 [!code-csharp[](environments/sample/EnvironmentsSample/Startup.cs?name=snippet_all&highlight=15,42)]
 

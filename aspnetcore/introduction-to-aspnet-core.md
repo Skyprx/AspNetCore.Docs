@@ -5,7 +5,7 @@ description: Get an introduction to ASP.NET Core, a cross-platform, high-perform
 ms.author: riande
 ms.custom: mvc
 ms.date: 04/17/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: index
 ---
 # Introduction to ASP.NET Core
@@ -67,7 +67,7 @@ We recommend the following sequence of tutorials for an introduction to developi
    |----------|----------|----------|
    |Web app                   | New server-side web UI development |[Get started with Razor Pages](xref:tutorials/razor-pages/razor-pages-start) |
    |Web app                   | Maintaining an MVC app |[Get started with MVC](xref:tutorials/first-mvc-app/start-mvc)|
-   |Web app                   | Client-side web UI development |[Get started with Blazor](xref:tutorials/first-blazor-app) |
+   |Web app                   | Client-side web UI development |[Get started with Blazor](https://dotnet.microsoft.com/learn/aspnet/blazor-tutorial/intro) |
    |Web API                   | RESTful HTTP services |[Create a web API](xref:tutorials/first-web-api)&dagger; |
    |Remote Procedure Call app | Contract-first services using Protocol Buffers |[Get started with a gRPC service](xref:tutorials/grpc/grpc-start) |
    |Real-time app             | Bidirectional communication between servers and connected clients |[Get started with SignalR](xref:tutorials/signalr) |

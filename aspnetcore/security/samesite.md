@@ -5,8 +5,7 @@ description: Learn how to use to SameSite cookies in ASP.NET Core
 ms.author: riande
 ms.custom: mvc
 ms.date: 12/03/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR, Electron]
-
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR, Electron]
 uid: security/samesite
 ---
 # Work with SameSite cookies in ASP.NET Core
@@ -25,9 +24,13 @@ The `SameSite=Lax` setting works for most application cookies. Some forms of aut
 
 Each ASP.NET Core component that emits cookies needs to decide if SameSite is appropriate.
 
+## SameSite and Identity
+
+[!INCLUDE[](~/includes/SameSiteIdentity.md)]
+
 ## SameSite test sample code
 
- ::: moniker range=">= aspnetcore-2.1 < aspnetcore-3.0"
+::: moniker range=">= aspnetcore-2.1 < aspnetcore-3.0"
 
 The following samples can be downloaded and tested:
 
@@ -42,7 +45,6 @@ The following samples can be downloaded and tested:
 
 The following sample can be downloaded and tested:
 
-
 | Sample               | Document |
 | ----------------- | ------------ |
 | [.NET Core Razor Pages](https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore31RazorPages)  | <xref:security/samesite/rp31> |
@@ -53,11 +55,11 @@ The following sample can be downloaded and tested:
 
 ## .NET Core support for the sameSite attribute
 
-.NET Core 2.2 supports the 2019 draft standard for SameSite since the release of updates in December 2019. Developers are able to programmatically control the value of the sameSite attribute using the `HttpCookie.SameSite` property. Setting the `SameSite` property to Strict, Lax, or None results in those values being written on the network with the cookie. Setting it equal to (SameSiteMode)(-1) indicates that no sameSite attribute should be included on the network with the cookie
+.NET Core 2.2 and later support the 2019 draft standard for SameSite since the release of updates in December 2019. Developers are able to programmatically control the value of the sameSite attribute using the `HttpCookie.SameSite` property. Setting the `SameSite` property to Strict, Lax, or None results in those values being written on the network with the cookie. Setting it equal to `(SameSiteMode)(-1)` indicates that no sameSite attribute should be included on the network with the cookie
 
 [!code-csharp[](samesite/snippets/Privacy.cshtml.cs?name=snippet)]
 
-.NET Core 3.0 supports the updated SameSite values and adds an extra enum value, `SameSiteMode.Unspecified` to the `SameSiteMode` enum.
+.NET Core 3.0 and later support the updated SameSite values and adds an extra enum value, `SameSiteMode.Unspecified` to the `SameSiteMode` enum.
 This new value indicates no sameSite should be sent with the cookie.
 
 ::: moniker-end
@@ -145,7 +147,7 @@ In `Startup.Configure`, add code that calls <xref:Microsoft.AspNetCore.Builder.C
 
 In `Startup.ConfigureServices`, add code similar to the following:
 
-::: moniker range="= aspnetcore-3.1"
+::: moniker range=">= aspnetcore-3.1"
 
 [!code-csharp[](samesite/sample/Startup31.cs?name=snippet)]
 

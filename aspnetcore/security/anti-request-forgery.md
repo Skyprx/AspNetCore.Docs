@@ -3,9 +3,9 @@ title: Prevent Cross-Site Request Forgery (XSRF/CSRF) attacks in ASP.NET Core
 author: steve-smith
 description: Discover how to prevent attacks against web apps where a malicious website can influence the interaction between a client browser and the app.
 ms.author: riande
-ms.custom: mvc
+ms.custom: mvc, devx-track-js
 ms.date: 12/05/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/anti-request-forgery
 ---
 # Prevent Cross-Site Request Forgery (XSRF/CSRF) attacks in ASP.NET Core
@@ -377,7 +377,7 @@ If cookies are used to store authentication tokens and to authenticate API reque
 
 Using JavaScript with views, the token can be created using a service from within the view. Inject the [Microsoft.AspNetCore.Antiforgery.IAntiforgery](/dotnet/api/microsoft.aspnetcore.antiforgery.iantiforgery) service into the view and call [GetAndStoreTokens](/dotnet/api/microsoft.aspnetcore.antiforgery.iantiforgery.getandstoretokens):
 
-[!code-csharp[](anti-request-forgery/sample/MvcSample/Views/Home/Ajax.cshtml?highlight=4-10,12-13,35-36)]
+[!code-cshtml[](anti-request-forgery/sample/MvcSample/Views/Home/Ajax.cshtml?highlight=4-10,12-13,35-36)]
 
 This approach eliminates the need to deal directly with setting cookies from the server or reading them from the client.
 
@@ -472,6 +472,10 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 [View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/anti-request-forgery/sample/AngularSample) ([how to download](xref:index#how-to-download-a-sample))
+
+## Windows authentication and antiforgery cookies
+
+When using Windows Authentication, application endpoints must be protected against CSRF attacks in the same way as done for cookies.  The browser implicitly sends the authentication context to the server, therefore endpoints need to be protected against CSRF attacks.
 
 ## Extend antiforgery
 

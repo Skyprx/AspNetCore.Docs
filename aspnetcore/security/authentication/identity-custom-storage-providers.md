@@ -5,7 +5,7 @@ description: Learn how to configure custom storage providers for ASP.NET Core Id
 ms.author: riande
 ms.custom: mvc
 ms.date: 07/23/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/authentication/identity-custom-storage-providers
 ---
 # Custom storage providers for ASP.NET Core Identity
@@ -14,7 +14,7 @@ By [Steve Smith](https://ardalis.com/)
 
 ASP.NET Core Identity is an extensible system which enables you to create a custom storage provider and connect it to your app. This topic describes how to create a customized storage provider for ASP.NET Core Identity. It covers the important concepts for creating your own storage provider, but isn't a step-by-step walkthrough.
 
-[View or download sample from GitHub](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/authentication/identity/sample).
+[View or download sample from GitHub](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/authentication/identity-custom-storage-providers/sample/CustomIdentityProviderSample).
 
 ## Introduction
 

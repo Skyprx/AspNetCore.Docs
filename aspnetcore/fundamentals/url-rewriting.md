@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
 ms.date: 08/16/2019
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/url-rewriting
 ---
 # URL Rewriting Middleware in ASP.NET Core
@@ -273,7 +273,7 @@ If you have an active IIS Rewrite Module with server-level rules configured that
 
 #### Unsupported features
 
-The middleware released with ASP.NET Core 2.x doesn't support the following IIS URL Rewrite Module features:
+The middleware doesn't support the following IIS URL Rewrite Module features:
 
 * Outbound Rules
 * Custom Server Variables
@@ -312,7 +312,7 @@ The middleware supports the following IIS URL Rewrite Module server variables:
 
 Use <xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*> to implement your own rule logic in a method. `Add` exposes the <xref:Microsoft.AspNetCore.Rewrite.RewriteContext>, which makes available the <xref:Microsoft.AspNetCore.Http.HttpContext> for use in your method. The [RewriteContext.Result](xref:Microsoft.AspNetCore.Rewrite.RewriteContext.Result*) determines how additional pipeline processing is handled. Set the value to one of the <xref:Microsoft.AspNetCore.Rewrite.RuleResult> fields described in the following table.
 
-| `RewriteContext.Result`              | Action                                                           |
+| Rewrite context result               | Action                                                           |
 | ------------------------------------ | ---------------------------------------------------------------- |
 | `RuleResult.ContinueRules` (default) | Continue applying rules.                                         |
 | `RuleResult.EndResponse`             | Stop applying rules and send the response.                       |
@@ -666,7 +666,7 @@ The middleware supports the following IIS URL Rewrite Module server variables:
 
 Use <xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*> to implement your own rule logic in a method. `Add` exposes the <xref:Microsoft.AspNetCore.Rewrite.RewriteContext>, which makes available the <xref:Microsoft.AspNetCore.Http.HttpContext> for use in your method. The [RewriteContext.Result](xref:Microsoft.AspNetCore.Rewrite.RewriteContext.Result*) determines how additional pipeline processing is handled. Set the value to one of the <xref:Microsoft.AspNetCore.Rewrite.RuleResult> fields described in the following table.
 
-| `RewriteContext.Result`              | Action                                                           |
+| Rewrite context result               | Action                                                           |
 | ------------------------------------ | ---------------------------------------------------------------- |
 | `RuleResult.ContinueRules` (default) | Continue applying rules.                                         |
 | `RuleResult.EndResponse`             | Stop applying rules and send the response.                       |

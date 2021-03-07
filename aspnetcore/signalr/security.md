@@ -6,7 +6,7 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: anurse
 ms.custom: mvc
 ms.date: 01/16/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: signalr/security
 ---
 # Security considerations in ASP.NET Core SignalR
@@ -60,7 +60,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
     app.UseEndpoints(endpoints =>
     {
-        endpoints.MapHub<ChatHub>("/chatHub");
+        endpoints.MapHub<ChatHub>("/chathub");
     });
 
     // ... other middleware ...
@@ -111,7 +111,7 @@ When using WebSockets or Server-Sent Events, the browser client sends the access
 
 ```
 info: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
-      Request starting HTTP/1.1 GET http://localhost:5000/myhub?access_token=1234
+      Request starting HTTP/1.1 GET http://localhost:5000/chathub?access_token=1234
 ```
 
 If you have concerns about logging this data with your server logs, you can disable this logging entirely by configuring the `Microsoft.AspNetCore.Hosting` logger to the `Warning` level or above (these messages are written at `Info` level). For more information, see [Log Filtering](xref:fundamentals/logging/index#log-filtering) for more information. If you still want to log certain request information, you can [write a middleware](xref:fundamentals/middleware/write) to log the data you require and filter out the `access_token` query string value (if present).

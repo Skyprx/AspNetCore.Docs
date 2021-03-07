@@ -5,7 +5,7 @@ description: Tips for increasing performance in ASP.NET Core apps and avoiding c
 monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.date: 04/06/2020
-no-loc: [Blazor, "Identity", "Let's Encrypt", Razor, SignalR]
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: performance/performance-best-practices
 ---
 # ASP.NET Core Performance Best Practices
@@ -26,7 +26,7 @@ In this document, a *hot code path* is defined as a code path that is frequently
 
 ASP.NET Core apps should be designed to process many requests simultaneously. Asynchronous APIs allow a small pool of threads to handle thousands of concurrent requests by not waiting on blocking calls. Rather than waiting on a long-running synchronous task to complete, the thread can work on another request.
 
-A common performance problem in ASP.NET Core apps is blocking calls that could be asynchronous. Many synchronous blocking calls lead to [Thread Pool starvation](https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/) and degraded response times.
+A common performance problem in ASP.NET Core apps is blocking calls that could be asynchronous. Many synchronous blocking calls lead to [Thread Pool starvation](/archive/blogs/vancem/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall) and degraded response times.
 
 **Do not**:
 
@@ -37,10 +37,16 @@ A common performance problem in ASP.NET Core apps is blocking calls that could b
 **Do**:
 
 * Make [hot code paths](#understand-hot-code-paths) asynchronous.
-* Call data access, I/O, and long-running operations APIs asynchronously if an asynchronous API is available. Do **not** use [Task.Run](/dotnet/api/system.threading.tasks.task.run) to make a synchronus API asynchronous.
+* Call data access, I/O, and long-running operations APIs asynchronously if an asynchronous API is available. Do **not** use [Task.Run](/dotnet/api/system.threading.tasks.task.run) to make a synchronous API asynchronous.
 * Make controller/Razor Page actions asynchronous. The entire call stack is asynchronous in order to benefit from [async/await](/dotnet/csharp/programming-guide/concepts/async/) patterns.
 
 A profiler, such as [PerfView](https://github.com/Microsoft/perfview), can be used to find threads frequently added to the [Thread Pool](/windows/desktop/procthread/thread-pools). The `Microsoft-Windows-DotNETRuntime/ThreadPoolWorkerThread/Start` event indicates a thread added to the thread pool. <!--  For more information, see [async guidance docs](TBD-Link_To_Davifowl_Doc)  -->
+
+## Return IEnumerable\<T> or IAsyncEnumerable\<T>
+
+Returning `IEnumerable<T>` from an action results in synchronous collection iteration by the serializer. The result is the blocking of calls and a potential for thread pool starvation. To avoid synchronous enumeration, use `ToListAsync` before returning the enumerable.
+
+Beginning with ASP.NET Core 3.0, `IAsyncEnumerable<T>` can be used as an alternative to `IEnumerable<T>` that enumerates asynchronously. For more information, see [Controller action return types](xref:web-api/action-return-types#return-ienumerablet-or-iasyncenumerablet).
 
 ## Minimize large object allocations
 
@@ -133,7 +139,7 @@ Recommendations:
 
 ## Use the latest ASP.NET Core release
 
-Each new release of ASP.NET Core includes performance improvements. Optimizations in .NET Core and ASP.NET Core mean that newer versions generally outperform older versions. For example, .NET Core 2.1 added support for compiled regular expressions and benefitted from [Span\<T>](https://msdn.microsoft.com/magazine/mt814808.aspx). ASP.NET Core 2.2 added support for HTTP/2. [ASP.NET Core 3.0 adds many improvements](xref:aspnetcore-3.0) that reduce memory usage and improve throughput. If performance is a priority, consider upgrading to the current version of ASP.NET Core.
+Each new release of ASP.NET Core includes performance improvements. Optimizations in .NET Core and ASP.NET Core mean that newer versions generally outperform older versions. For example, .NET Core 2.1 added support for compiled regular expressions and benefitted from [Span\<T>](/archive/msdn-magazine/2018/january/csharp-all-about-span-exploring-a-new-net-mainstay). ASP.NET Core 2.2 added support for HTTP/2. [ASP.NET Core 3.0 adds many improvements](xref:aspnetcore-3.0) that reduce memory usage and improve throughput. If performance is a priority, consider upgrading to the current version of ASP.NET Core.
 
 ## Minimize exceptions
 
@@ -341,3 +347,11 @@ Checking if the response has not started allows registering a callback that will
 ## Do not call next() if you have already started writing to the response body
 
 Components only expect to be called if it's possible for them to handle and manipulate the response.
+
+## Use In-process hosting with IIS
+
+Using in-process hosting, an ASP.NET Core app runs in the same process as its IIS worker process. In-process hosting provides improved performance over out-of-process hosting because requests aren't proxied over the loopback adapter. The loopback adapter is a network interface that returns outgoing network traffic back to the same machine. IIS handles process management with the [Windows Process Activation Service (WAS)](/iis/manage/provisioning-and-managing-iis/features-of-the-windows-process-activation-service-was).
+
+Projects default to the in-process hosting model in ASP.NET Core 3.0 and later.
+
+For more information, see [Host ASP.NET Core on Windows with IIS](xref:host-and-deploy/iis/index)

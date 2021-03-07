@@ -1,2 +1,5 @@
-* [Visual Studio for Mac version 8.6 or later](/visualstudio/releasenotes/vs2019-mac-preview-relnotes)
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
+* [Visual Studio for Mac Preview](https://visualstudio.microsoft.com/vs/mac/)
 * [!INCLUDE [.NET 5.0 SDK](~/includes/5.0-SDK.md)]
